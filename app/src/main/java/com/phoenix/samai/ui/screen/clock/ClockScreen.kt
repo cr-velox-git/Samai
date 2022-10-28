@@ -318,10 +318,10 @@ fun staticUi() {
     }
 }
 
-@Composable
-fun drawHourLabel() {
-
-}
+//@Composable
+//fun drawHourLabel() {
+//
+//}
 
 // second clock UI methods
 fun DrawScope.minuteHand2(
@@ -390,7 +390,7 @@ fun currentClockType(): ClockType {
     }
 }
 
-fun TimeZone.offset(): String? {
+fun TimeZone.offset(): String {
     val calendar: Calendar = Calendar.getInstance(this, Locale.getDefault())
     val timeZone: String = SimpleDateFormat("Z").format(calendar.time)
     return timeZone.substring(0, 3) + ":" + timeZone.substring(3, 5)

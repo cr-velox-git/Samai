@@ -24,6 +24,7 @@ import com.phoenix.samai.R
 import com.phoenix.samai.data.viewmodels.AlarmViewModel
 import com.phoenix.samai.ui.screen.Destinations
 import com.phoenix.samai.ui.screen.clock.Container
+import com.phoenix.samai.ui.screen.timer.Progress
 import org.koin.java.KoinJavaComponent.inject
 
 /**
@@ -48,6 +49,7 @@ fun AlarmScreen(navController: NavController) {
                     })*//*
                 }*/
             }
+//            Progress(modifier = Modifier.padding(16.dp).fillMaxWidth(),50f)
             FloatingActionButton(
                 onClick = {
                     navController.navigate(Destinations.CREATE_ALARM_ROUTE)
@@ -58,7 +60,7 @@ fun AlarmScreen(navController: NavController) {
                     .padding(80.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_globe),
+                    painter = painterResource(id = R.drawable.ic_baseline_add_alarm_24),
                     contentDescription = stringResource(
                         id = R.string.image_desc
                     ),

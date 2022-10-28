@@ -1,5 +1,6 @@
 package com.phoenix.samai.ui.components
 
+import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -23,6 +24,7 @@ import com.phoenix.samai.ui.screen.alarm.CreateAlarmScreen
 import com.phoenix.samai.ui.screen.clock.TimeZoneScreen
 import com.phoenix.samai.ui.screen.home.HomeScreen
 import com.phoenix.samai.ui.screen.setting.SettingsScreen
+import com.phoenix.samai.ui.screen.timer.TimerScreen
 import com.phoenix.samai.ui.theme.SamaiTheme
 
 @Composable
@@ -37,8 +39,7 @@ fun RootView(content: @Composable () -> Unit){
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
-@Preview
-fun NavigationContainer() {
+fun NavigationContainer(context: Context) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
     ModalBottomSheetLayout(bottomSheetNavigator) {
@@ -48,7 +49,7 @@ fun NavigationContainer() {
             startDestination = Destinations.HOME_ROUTE
         ) {
             composable(Destinations.HOME_ROUTE) {
-                HomeScreen(navController)
+                HomeScreen(context, navController)
             }
             bottomSheet(Destinations.TIMEZONE_ROUTE) {
                 TimeZoneScreen(bottomSheetNavigator) {
@@ -58,6 +59,11 @@ fun NavigationContainer() {
             composable(Destinations.SETTINGS_ROUTE) {
                 SettingsScreen {
                     navController.navigateUp()
+                }
+            }
+            composable(Destinations.TIMER_ROUTE) {
+                TimerScreen (context){
+//                    navController.navigateUp()
                 }
             }
             bottomSheet(Destinations.CREATE_ALARM_ROUTE) {
