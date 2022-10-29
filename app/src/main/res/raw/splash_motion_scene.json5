@@ -1,0 +1,136 @@
+{
+  ConstraintSets: {
+    start: {
+      circle_1: {
+         width: 'spread',
+         height: 'spread',
+         start: ['parent', 'start'],
+         end: ['parent', 'end'],
+         top: ['parent', 'top'],
+         bottom: ['parent', 'bottom'],
+       },
+      circle_2: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      },
+      circle_3: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      },
+      circle_4: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      },
+      circle_5: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      }
+    },
+    end: {
+      circle_1: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      },
+      circle_2: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      },
+      circle_3: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      },
+      circle_4: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      },
+      circle_5: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      }
+    }
+  },
+  Transitions: {
+    default: {
+      from: 'start',
+      to: 'end',
+      pathMotionArc: 'startHorizontal',
+      KeyFrames: {
+        KeyAttributes: [
+          {
+            target: ['circle_1'],
+            frames: [0,25,50,75,100],
+            rotationZ: [0,45,90,135,180]
+          },
+          {
+            target: ['circle_2'],
+            frames: [0,25,50,75,100],
+            rotationZ: [0,90,180,270,360]
+          },
+          {
+            target: ['circle_3'],
+            frames: [0,25,50,75,100],
+            rotationZ: [0,180,360,180,360]
+          },
+          {
+            target: ['circle_4'],
+            frames: [0,25,50,75,100],
+            rotationZ: [0,360,0,360,0]
+          },
+          {
+            target: ['circle_5'],
+            frames: [0,25,50,75,100],
+            rotationZ: [0,45,90,135,180]
+          },
+          {
+            target: ['circle_5'],
+            frames: [0,95,96,100],
+            scaleX: [1,1,3,10],
+            scaleY: [1,1,3,10]
+          },
+          {
+            target: ['circle_2'],
+            frames: [0,95,96,100],
+            scaleX: [1,1,2,5],
+            scaleY: [1,1,2,5]
+          }
+        ]
+      }
+    }
+  }
+}

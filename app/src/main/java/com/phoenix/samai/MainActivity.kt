@@ -3,6 +3,8 @@ package com.phoenix.samai
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.phoenix.samai.ui.components.NavigationContainer
@@ -16,7 +18,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             RootView {
-                NavigationContainer(this)
+                val once = remember { mutableStateOf(true) }
+                NavigationContainer(this,once)
             }
         }
     }

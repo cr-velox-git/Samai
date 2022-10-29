@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -39,7 +39,7 @@ fun RootView(content: @Composable () -> Unit){
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
-fun NavigationContainer(context: Context) {
+fun NavigationContainer(context: Context, once: MutableState<Boolean>) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
     ModalBottomSheetLayout(bottomSheetNavigator) {
@@ -49,7 +49,7 @@ fun NavigationContainer(context: Context) {
             startDestination = Destinations.HOME_ROUTE
         ) {
             composable(Destinations.HOME_ROUTE) {
-                HomeScreen(context, navController)
+                HomeScreen(context, navController,once)
             }
             bottomSheet(Destinations.TIMEZONE_ROUTE) {
                 TimeZoneScreen(bottomSheetNavigator) {

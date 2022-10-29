@@ -1,24 +1,27 @@
 package com.phoenix.samai.ui.screen.splash
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.*
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.phoenix.samai.MainActivity
+import com.phoenix.samai.R
 import com.phoenix.samai.ui.components.RootView
 import java.util.*
 
@@ -30,22 +33,76 @@ class SplashScreenActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             RootView {
-                SplashScreen()
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colors.background)
+                ) {
+                    val progress = remember { mutableStateOf(0f) }
+                    val i = remember {
+                        mutableStateOf(0f)
+                    }
+                    val clockTicking = remember { mutableStateOf(false) }
+                    val clock = object : CountDownTimer(25000, 10) {
+                        override fun onTick(p0: Long) {
+                            progress.value = (0.08f * i.value) / 100
+                            i.value += 10
+                            if (progress.value >= 1f) {
+                                cancel()
+                                callIntent()
+                            }
+                        }
+
+                        override fun onFinish() {
+                        }
+                    }
+                    if (!clockTicking.value) {
+                        clockTicking.value = true
+                        clock.start()
+                    }
+
+
+
+
+                    Spacer(modifier = Modifier.weight(1f))
+                    Row() {
+                        Spacer(modifier = Modifier.weight(1f))
+                        SplashScreen(progress = progress)
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                                   }
             }
         }
     }
+
+    private fun callIntent() {
+        val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
 }
 
+
+@OptIn(ExperimentalMotionApi::class)
 @Composable
-@Preview
-fun SplashScreen() {
-    Column(
+fun SplashScreen(progress: MutableState<Float>) {
+    val context = LocalContext.current
+    val dpSize = 350.dp
+    val motionScene = remember {
+        context.resources.openRawResource(R.raw.splash_motion_scene)
+            .readBytes()
+            .decodeToString()
+    }
+    MotionLayout(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)
+            .width(dpSize)
+            .height(dpSize),
+        progress = progress.value,
+        motionScene = MotionScene(content = motionScene)
     ) {
 
-        val dpSize = 350.dp
+
         val red = Brush.linearGradient(
             listOf(
                 MaterialTheme.colors.secondary,
@@ -68,141 +125,180 @@ fun SplashScreen() {
             )
         )
 
-        Spacer(Modifier.weight(1f))
         Box(
-            modifier = Modifier
+            Modifier
                 .width(dpSize)
                 .height(dpSize)
-                .align(Alignment.CenterHorizontally)
+                .layoutId("circle_1")
         ) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .layoutId("circle_1")) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val width = size.width
-                    val height = size.height
+            Canvas(
+                modifier = Modifier
+                    .width(dpSize)
+                    .height(dpSize)
+            ) {
+                val width = size.width
+                val height = size.height
 
-                    drawArc(
-                        topLeft = Offset(0f, 0f),
-                        brush = red,
-                        size = Size(width, width),
-                        useCenter = true,
-                        startAngle = 0f,
-                        sweepAngle = 160f
-                    )
-                }
+                drawArc(
+                    topLeft = Offset(0f, 0f),
+                    brush = red,
+                    size = Size(width, width),
+                    useCenter = true,
+                    startAngle = 0f,
+                    sweepAngle = 160f
+                )
             }
-
-            Box(Modifier.fillMaxSize()) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val width = size.width
-                    val height = size.height
-
-                    drawArc(
-                        topLeft = Offset(20f, 20f),
-                        brush = white,
-                        size = Size(width - 40, width - 40),
-                        useCenter = true,
-                        startAngle = 0f,
-                        sweepAngle = 360f
-                    )
-                }
-            }
-
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .layoutId("circle_2")) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val width = size.width
-                    val height = size.height
-
-                    drawArc(
-                        topLeft = Offset(50f, 50f),
-                        brush = black,
-                        size = Size(width - 100, width - 100),
-                        useCenter = true,
-                        startAngle = 120f,
-                        sweepAngle = 200f
-                    )
-                }
-            }
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .layoutId("circle_3")) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val width = size.width
-                    val height = size.height
-
-                    drawArc(
-                        topLeft = Offset(0f, 0f),
-                        brush = red,
-                        size = Size(width, width),
-                        useCenter = true,
-                        startAngle = 0f,
-                        sweepAngle = 60f
-                    )
-                }
-            }
-
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .layoutId("circle_4")) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val width = size.width
-                    val height = size.height
-
-                    drawArc(
-                        topLeft = Offset(120f, 120f),
-                        brush = white,
-                        size = Size(width - 240, width - 240),
-                        useCenter = true,
-                        startAngle = 200f,
-                        sweepAngle = 60f
-                    )
-                }
-            }
-            Box(Modifier.fillMaxSize()) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val width = size.width
-                    val height = size.height
-
-                    drawArc(
-                        topLeft = Offset(140f, 140f),
-                        brush = white,
-                        size = Size(width - 280, width - 280),
-                        useCenter = true,
-                        startAngle = 0f,
-                        sweepAngle = 360f
-                    )
-                }
-            }
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .layoutId("circle_5")) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val width = size.width
-                    val height = size.height
-
-                    drawArc(
-                        topLeft = Offset(170f, 170f),
-                        brush = red,
-                        size = Size(width - 340, width - 340),
-                        useCenter = true,
-                        startAngle = 0f,
-                        sweepAngle = 360f
-                    )
-                }
-            }
-
         }
-        Spacer(Modifier.weight(1f))
+
+        Box(
+            Modifier
+                .width(dpSize)
+                .height(dpSize)
+        ) {
+            Canvas(
+                modifier = Modifier
+                    .width(dpSize)
+                    .height(dpSize)
+            ) {
+                val width = size.width
+                val height = size.height
+
+                drawArc(
+                    topLeft = Offset(20f, 20f),
+                    brush = white,
+                    size = Size(width - 40, width - 40),
+                    useCenter = true,
+                    startAngle = 0f,
+                    sweepAngle = 360f
+                )
+            }
+        }
+
+        Box(
+            Modifier
+                .width(dpSize)
+                .height(dpSize)
+                .layoutId("circle_2")
+        ) {
+            Canvas(
+                modifier = Modifier
+                    .width(dpSize)
+                    .height(dpSize)
+            ) {
+                val width = size.width
+                val height = size.height
+
+                drawArc(
+                    topLeft = Offset(50f, 50f),
+                    brush = black,
+                    size = Size(width - 100, width - 100),
+                    useCenter = true,
+                    startAngle = 120f,
+                    sweepAngle = 200f
+                )
+            }
+        }
+        Box(
+            Modifier
+                .width(dpSize)
+                .height(dpSize)
+                .layoutId("circle_3")
+        ) {
+            Canvas(
+                modifier = Modifier
+                    .width(dpSize)
+                    .height(dpSize)
+            ) {
+                val width = size.width
+                val height = size.height
+
+                drawArc(
+                    topLeft = Offset(0f, 0f),
+                    brush = red,
+                    size = Size(width, width),
+                    useCenter = true,
+                    startAngle = 0f,
+                    sweepAngle = 60f
+                )
+            }
+        }
+
+        Box(
+            Modifier
+                .width(dpSize)
+                .height(dpSize)
+                .layoutId("circle_4")
+        ) {
+            Canvas(
+                modifier = Modifier
+                    .width(dpSize)
+                    .height(dpSize)
+            ) {
+                val width = size.width
+                val height = size.height
+
+                drawArc(
+                    topLeft = Offset(120f, 120f),
+                    brush = white,
+                    size = Size(width - 240, width - 240),
+                    useCenter = true,
+                    startAngle = 200f,
+                    sweepAngle = 60f
+                )
+            }
+        }
+        Box(
+            Modifier
+                .width(dpSize)
+                .height(dpSize)
+        ) {
+            Canvas(
+                modifier = Modifier
+                    .width(dpSize)
+                    .height(dpSize)
+            ) {
+                val width = size.width
+                val height = size.height
+
+                drawArc(
+                    topLeft = Offset(140f, 140f),
+                    brush = white,
+                    size = Size(width - 280, width - 280),
+                    useCenter = true,
+                    startAngle = 0f,
+                    sweepAngle = 360f
+                )
+            }
+        }
+        Box(
+            Modifier
+                .width(dpSize)
+                .height(dpSize)
+                .layoutId("circle_5")
+        ) {
+            Canvas(
+                modifier = Modifier
+                    .width(dpSize)
+                    .height(dpSize)
+            ) {
+                val width = size.width
+                val height = size.height
+
+                drawArc(
+                    topLeft = Offset(170f, 170f),
+                    brush = red,
+                    size = Size(width - 340, width - 340),
+                    useCenter = true,
+                    startAngle = 0f,
+                    sweepAngle = 360f
+                )
+            }
+        }
+
 
     }
 
+
 }
+
 

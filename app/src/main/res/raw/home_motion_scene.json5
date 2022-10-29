@@ -1,0 +1,63 @@
+{
+  ConstraintSets: {
+    start: {
+      circle_1: {
+         width: 'spread',
+         height: 'spread',
+         start: ['parent', 'start'],
+         end: ['parent', 'end'],
+         top: ['parent', 'top'],
+         bottom: ['parent', 'bottom'],
+       },
+      circle_2: {
+         width: 'spread',
+         height: 'spread',
+         start: ['parent', 'start'],
+         end: ['parent', 'end'],
+         top: ['parent', 'top'],
+         bottom: ['parent', 'bottom'],
+       }
+    },
+    end: {
+      circle_1: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      },
+      circle_2: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      }
+    }
+  },
+  Transitions: {
+    default: {
+      from: 'start',
+      to: 'end',
+      pathMotionArc: 'startHorizontal',
+      KeyFrames: {
+        KeyAttributes: [
+          {
+            target: ['circle_1'],
+            frames: [0,50,100],
+            scaleX: [1000,10,0],
+            scaleY: [1000,10,0]
+          },
+          {
+            target: ['circle_2'],
+            frames: [0,25,50,100],
+            scaleX: [2000,10,5,0],
+            scaleY: [2000,10,5,0]
+          }
+        ]
+      }
+    }
+  }
+}

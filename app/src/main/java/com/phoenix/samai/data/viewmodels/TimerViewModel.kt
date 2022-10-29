@@ -1,6 +1,7 @@
 package com.phoenix.samai.data.viewmodels
 
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 
@@ -9,15 +10,16 @@ class TimerViewModel : ViewModel() {
 
 
     fun runTimer(
-        sec: Float,
-        progress: MutableState<Float>,
-        timeRemains: MutableState<String>,
+        sec: Float ? = null,
+        progress: MutableState<Float> ? = null,
+        timeRemains: MutableState<String> ? = null,
         finalFunction: () -> Unit
-    )  = object : CountDownTimer((sec * 1000).toLong(), 1000) {
+    )  = object : CountDownTimer((sec?.times(1000))?.toLong()!!, 1000) {
             var t = sec
             override fun onTick(millisUntilFinished: Long) {
-                t -= 1
-                progress.value = (100f / sec) * t
+                Log.i("timer","running..")
+                t = t?.minus(1)
+                progress?.value = (100f / sec!!) * t!!
 
                 var diff = millisUntilFinished
                 val secondsInMilli: Long = 1000
@@ -32,7 +34,7 @@ class TimerViewModel : ViewModel() {
                 diff %= minutesInMilli
 
                 val elapsedSeconds = diff / secondsInMilli
-                timeRemains.value = "$elapsedHours:$elapsedMinutes:$elapsedSeconds"
+                timeRemains?.value = "$elapsedHours:$elapsedMinutes:$elapsedSeconds"
 
             }
 

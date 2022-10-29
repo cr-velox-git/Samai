@@ -1,9 +1,12 @@
 package com.phoenix.samai.ui.screen.timer
 
+import android.app.Activity
 import android.content.Context
 import android.media.MediaPlayer
 import android.os.PowerManager
 import android.provider.Settings
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.phoenix.samai.R
 import com.phoenix.samai.data.viewmodels.TimerViewModel
+import com.phoenix.samai.ui.components.Progress
 import org.koin.java.KoinJavaComponent
 
 
@@ -55,12 +59,16 @@ fun timeScreen(context: Context) {
             .background(MaterialTheme.colors.background)
             .padding(16.dp)
     ) {
+        /**
+         * creating notification object
+         * */
         val mWakeLock =
             (context.getSystemService(Context.POWER_SERVICE) as PowerManager)
                 .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, javaClass.name)
-        val hour = remember { mutableStateOf("0") }
-        val pMin = remember { mutableStateOf("0") }
-        val sMin = remember { mutableStateOf("0") }
+
+        val hour = remember { mutableStateOf("") }
+        val pMin = remember { mutableStateOf("") }
+        val sMin = remember { mutableStateOf("") }
         val pProgress = remember { mutableStateOf(100f) }
         val pTimer = remember { mutableStateOf("0:0:0") }
         val sProgress = remember { mutableStateOf(100f) }
@@ -95,7 +103,6 @@ fun timeScreen(context: Context) {
                 .width(500.dp)
                 .height(500.dp)
         ) {
-
 
             Progress(
                 modifier = Modifier
@@ -138,17 +145,19 @@ fun timeScreen(context: Context) {
                 .clickable {
 
                     if (pMin.value != "" && sMin.value != "" && btn.value == "START") {
-                        btn.value = "STOP"
+                        btn.value = "RUNNING..."
 
-// screen stays on in this section
-// screen stays on in this section
 
                         setDuration.value = false
-                        val _hour = hour.value.toFloat() * 60 * 60
                         val pmin = pMin.value.toFloat() * 60
                         val smin = sMin.value.toFloat() * 60
+                        val _hour = if (hour.value != "" && hour.value.toFloat() != 0f) {
+                            hour.value.toFloat() * 60 * 60
+                        } else {
+                            (pmin + smin)
+                        }
 
-                        val n = _hour / (pmin + smin)
+                        count.value = (_hour / (pmin + smin)).toInt()
                         startProgress(
                             context,
                             mWakeLock,
@@ -159,12 +168,16 @@ fun timeScreen(context: Context) {
                             pTimer,
                             sTimer,
                             count,
-                            n,
                             pmin,
-                            smin
+                            smin,
+                            btn
                         )
 
 
+                    } else {
+                        Toast
+                            .makeText(context, "focus on your work", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
         )
@@ -173,116 +186,7 @@ fun timeScreen(context: Context) {
     }
 }
 
-fun startProgress(
-    context: Context,
-    mWakeLock: PowerManager.WakeLock,
-    setDuration: MutableState<Boolean>,
-    pProgress: MutableState<Float>,
-    sProgress: MutableState<Float>,
-    viewModel: TimerViewModel,
-    pTimer: MutableState<String>,
-    sTimer: MutableState<String>,
-    count: MutableState<Int>,
-    n: Float,
-    pmin: Float,
-    smin: Float
-) {
-    if (count.value < n) {
-        mWakeLock.acquire()
-        pProgress.value = 100f
-        sProgress.value = 100f
-        viewModel.runTimer(pmin, pProgress, pTimer) {
-            playSound(context)
-            viewModel.runTimer(smin, sProgress, sTimer) {
-                pProgress.value = 100f
-                sProgress.value = 100f
-                playSound(context)
-                count.value += 1
-                startProgress(
-                    context,
-                    mWakeLock,
-                    setDuration,
-                    pProgress,
-                    sProgress,
-                    viewModel,
-                    pTimer,
-                    sTimer,
-                    count,
-                    n,
-                    pmin,
-                    smin
-                )
-            }.start()
-        }.start()
-    } else {
-        setDuration.value = true
-        mWakeLock.release()
-    }
-}
 
-fun playSound(context: Context) {
-    val player = MediaPlayer.create(context, Settings.System.DEFAULT_NOTIFICATION_URI)
-    player.start()
-}
-
-@Composable
-fun Progress(modifier: Modifier, pProgress: Float, sProgress: Float) {
-//    val size = 300
-    val sizeDp = 300.dp
-    val thickness = 100f
-
-    val pStartAngle = 150f
-    val pEndAngle = 240f
-    val sStartAngle = 30f
-    val sEndAngle = 120f
-
-    Box(
-        modifier = modifier
-    ) {
-        val brush1 = Brush.linearGradient(
-            listOf(
-                MaterialTheme.colors.secondary,
-                MaterialTheme.colors.secondary
-            )
-        )
-        val brush2 = Brush.linearGradient(
-            listOf(
-                MaterialTheme.colors.primary,
-                MaterialTheme.colors.primary
-            )
-        )
-        Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
-            val width = size.width
-            val height = size.height
-
-
-            drawArc(
-                topLeft = Offset(0f, 0f),
-                brush = brush2,
-                size = Size(width, width),
-                useCenter = true,
-                startAngle = sStartAngle,
-                sweepAngle = sEndAngle * (sProgress / 100)
-            )
-            drawArc(
-                topLeft = Offset(0f, 0f),
-                brush = brush1,
-                useCenter = true,
-                size = Size(width, width),
-                startAngle = pStartAngle,
-                sweepAngle = pEndAngle * (pProgress / 100f)
-            )
-            drawArc(
-                topLeft = Offset(0f + thickness / 2, 0f + thickness / 2),
-                brush = Brush.linearGradient(listOf(Color.White, Color.White)),
-                useCenter = true,
-                size = Size(width - thickness, width - thickness),
-                startAngle = 0f,
-                sweepAngle = 360f
-            )
-        })
-    }
-}
 
 @Composable
 fun SetDuration(
@@ -358,3 +262,69 @@ fun SetDuration(
         Text(text = " hour ", Modifier.align(Alignment.CenterHorizontally), fontSize = 10.sp)
     }
 }
+
+fun startProgress(
+    context: Context,
+    mWakeLock: PowerManager.WakeLock,
+    setDuration: MutableState<Boolean>,
+    pProgress: MutableState<Float>,
+    sProgress: MutableState<Float>,
+    viewModel: TimerViewModel,
+    pTimer: MutableState<String>,
+    sTimer: MutableState<String>,
+    count: MutableState<Int>,
+    pmin: Float,
+    smin: Float,
+    btn: MutableState<String>,
+) {
+    if (count.value > 0) {
+
+        /**
+         * Disable touch input
+         * */
+        (context as Activity).window.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        )
+        mWakeLock.acquire()
+        pProgress.value = 100f
+        sProgress.value = 100f
+        viewModel.runTimer(pmin, pProgress, pTimer) {
+            playSound(context)
+            viewModel.runTimer(smin, sProgress, sTimer) {
+                pProgress.value = 100f
+                sProgress.value = 100f
+                playSound(context)
+                count.value -= 1
+                startProgress(
+                    context,
+                    mWakeLock,
+                    setDuration,
+                    pProgress,
+                    sProgress,
+                    viewModel,
+                    pTimer,
+                    sTimer,
+                    count,
+                    pmin,
+                    smin,
+                    btn
+                )
+            }.start()
+        }.start()
+    } else {
+        setDuration.value = true
+        mWakeLock.release()
+        btn.value = "START"
+        /**
+         * Enable touch input
+         * */
+        (context as Activity).window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    }
+}
+
+fun playSound(context: Context) {
+    val player = MediaPlayer.create(context, Settings.System.DEFAULT_NOTIFICATION_URI)
+    player.start()
+}
+
