@@ -24,7 +24,6 @@ import com.phoenix.samai.R
 import com.phoenix.samai.data.viewmodels.AlarmViewModel
 import com.phoenix.samai.ui.screen.Destinations
 import com.phoenix.samai.ui.screen.clock.Container
-import com.phoenix.samai.ui.screen.timer.Progress
 import org.koin.java.KoinJavaComponent.inject
 
 /**
