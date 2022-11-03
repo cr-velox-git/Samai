@@ -3,6 +3,7 @@ package com.phoenix.samai.ui.screen.splash
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
@@ -23,6 +24,7 @@ import androidx.core.view.WindowCompat
 import com.phoenix.samai.MainActivity
 import com.phoenix.samai.R
 import com.phoenix.samai.ui.components.RootView
+import com.phoenix.samai.utils.RootUtils
 import java.util.*
 
 @OptIn(ExperimentalMotionApi::class)
@@ -49,7 +51,12 @@ class SplashScreenActivity : ComponentActivity() {
                             i.value += 10
                             if (progress.value >= 1f) {
                                 cancel()
-                                callIntent()
+                                if (RootUtils.isDeviceRooted) {
+                                    Toast.makeText(this@SplashScreenActivity, "Device is rooted", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(this@SplashScreenActivity, "Device is not rooted", Toast.LENGTH_SHORT).show()
+                                    callIntent()
+                                }
                             }
                         }
 
@@ -71,7 +78,7 @@ class SplashScreenActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.weight(1f))
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                                   }
+                }
             }
         }
     }

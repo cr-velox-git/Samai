@@ -2,15 +2,19 @@ package com.phoenix.samai.ui.screen.timer
 
 import android.app.Activity
 import android.content.Context
+import android.media.MediaCodec.MetricsConstants.SECURE
 import android.media.MediaPlayer
 import android.os.PowerManager
 import android.provider.Settings
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.compose.foundation.Canvas
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,13 +32,12 @@ import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,6 +51,7 @@ import org.koin.java.KoinJavaComponent
 @Composable
 fun TimerScreen(context: Context, navigateUp: () -> Unit) {
     timeScreen(context)
+
 }
 
 @Composable
@@ -59,16 +63,33 @@ fun timeScreen(context: Context) {
             .background(MaterialTheme.colors.background)
             .padding(16.dp)
     ) {
+        
         /**
          * creating notification object
          * */
         val mWakeLock =
             (context.getSystemService(Context.POWER_SERVICE) as PowerManager)
                 .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, javaClass.name)
+//
+//        val appPackage = arrayOf("com.phoenix.samai")
+//        val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE)
+//                as DevicePolicyManager
+////        dpm.setLockTaskPackages((context as Activity).componentName,appPackage)
+//        // Set an option to turn on lock task mode when starting the activity.
+//        val options = ActivityOptions.makeBasic()
+//        options.setLockTaskEnabled(true)
 
-        val hour = remember { mutableStateOf("") }
-        val pMin = remember { mutableStateOf("") }
-        val sMin = remember { mutableStateOf("") }
+// Start our kiosk app's main activity with our lock task mode option.
+//        val packageManager = context.packageManager
+//        val launchIntent = packageManager.getLaunchIntentForPackage("com.phoenix.samai")
+//        if (launchIntent != null) {
+//            context.startActivity(launchIntent, options.toBundle())
+//        }
+
+
+        val hour = remember { mutableStateOf("0") }
+        val pMin = remember { mutableStateOf("0") }
+        val sMin = remember { mutableStateOf("0") }
         val pProgress = remember { mutableStateOf(100f) }
         val pTimer = remember { mutableStateOf("0:0:0") }
         val sProgress = remember { mutableStateOf(100f) }
@@ -129,6 +150,11 @@ fun timeScreen(context: Context) {
         }
         if (setDuration.value) {
             SetDuration(hour, pMin, sMin)
+            BackHandler(enabled = false){ }
+        }else{
+            BackHandler(enabled = true){
+                Toast.makeText(context, "focus on work no going back", Toast.LENGTH_SHORT).show()
+            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -144,8 +170,13 @@ fun timeScreen(context: Context) {
                 .padding(16.dp)
                 .clickable {
 
-                    if (pMin.value != "" && sMin.value != "" && btn.value == "START") {
+                    if (pMin.value == "") pMin.value = "0"
+                    if (sMin.value == "") sMin.value = "0"
+                    if (pMin.value != "0" || sMin.value != "0" && btn.value == "START") {
+
+
                         btn.value = "RUNNING..."
+
 
 
                         setDuration.value = false
@@ -170,13 +201,14 @@ fun timeScreen(context: Context) {
                             count,
                             pmin,
                             smin,
-                            btn
+                            btn,
+//                            dpm
                         )
 
 
                     } else {
                         Toast
-                            .makeText(context, "focus on your work", Toast.LENGTH_SHORT)
+                            .makeText(context, "please set duration", Toast.LENGTH_SHORT)
                             .show()
                     }
                 }
@@ -187,7 +219,6 @@ fun timeScreen(context: Context) {
 }
 
 
-
 @Composable
 fun SetDuration(
     hour: MutableState<String>,
@@ -196,45 +227,94 @@ fun SetDuration(
 ) {
     Column(modifier = Modifier) {
         Row(Modifier.fillMaxWidth()) {
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(2f))
             OutlinedTextField(
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = MaterialTheme.colors.secondary,
-                    unfocusedBorderColor = MaterialTheme.colors.secondary
-                ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 value = pMin.value,
-                singleLine = true,
+                modifier = Modifier
+                    .weight(3f)
+                    .background(color = MaterialTheme.colors.background)
+                    .scrollable(orientation = Orientation.Vertical,
+                        state = rememberScrollableState { delta ->
+                            if (delta.toInt() % 5 == 0) {
+                                if (pMin.value.toInt() >= 0) {
+                                    pMin.value = (pMin.value.toInt() - (delta / 5))
+                                        .toInt()
+                                        .toString()
+                                } else {
+                                    pMin.value = "0"
+                                }
+                            }
+
+                            delta
+                        }),
+                textStyle = TextStyle(
+                    color = MaterialTheme.colors.secondary,
+                    fontSize = 70.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                ),
                 onValueChange = {
                     pMin.value = it
                 },
-                modifier = Modifier
-                    .background(MaterialTheme.colors.onPrimary)
-                    .weight(1f),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                maxLines = 1,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colors.secondary,
+                    unfocusedBorderColor = MaterialTheme.colors.background
+                ),
+                singleLine = true,
             )
+//            TextField(value = pMin.value, onValueChange = {
+//                pMin.value = it
+//            },
+//                textStyle = TextStyle()
+//
+//            )
             Text(text = " / ", Modifier.align(CenterVertically), fontSize = 40.sp)
             OutlinedTextField(
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = MaterialTheme.colors.primary,
-                    unfocusedBorderColor = MaterialTheme.colors.primary
-                ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 value = sMin.value,
-                singleLine = true,
+                modifier = Modifier
+                    .weight(3f)
+                    .background(color = MaterialTheme.colors.background)
+                    .scrollable(orientation = Orientation.Vertical,
+                        state = rememberScrollableState { delta ->
+                            if (delta.toInt() % 5 == 0) {
+                                if (sMin.value.toInt() >= 0) {
+                                    sMin.value = (sMin.value.toInt() - (delta / 5))
+                                        .toInt()
+                                        .toString()
+                                } else {
+                                    sMin.value = "0"
+                                }
+                            }
+
+                            delta
+                        }),
+                textStyle = TextStyle(
+                    color = MaterialTheme.colors.primary,
+                    fontSize = 70.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                ),
                 onValueChange = {
                     sMin.value = it
                 },
-                modifier = Modifier
-                    .background(MaterialTheme.colors.onPrimary)
-                    .weight(1f),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                maxLines = 1,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colors.primary,
+                    unfocusedBorderColor = MaterialTheme.colors.background
+                ),
+                singleLine = true,
             )
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(2f))
+
         }
 
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(0.dp, 0.dp, 0.dp, 8.dp)
         ) {
             Spacer(modifier = Modifier.weight(1f))
             Text(text = " min ", Modifier.align(CenterVertically), fontSize = 10.sp)
@@ -243,21 +323,42 @@ fun SetDuration(
             Spacer(modifier = Modifier.weight(1f))
         }
 
+
         OutlinedTextField(
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colors.primary,
-                unfocusedBorderColor = MaterialTheme.colors.primary
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             value = hour.value,
-            singleLine = true,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .background(color = MaterialTheme.colors.background)
+                .scrollable(orientation = Orientation.Vertical,
+                    state = rememberScrollableState { delta ->
+                        if (delta.toInt() % 5 == 0) {
+                            if (hour.value.toInt() >= 0) {
+                                hour.value = (hour.value.toInt() - (delta / 5))
+                                    .toInt()
+                                    .toString()
+                            } else {
+                                hour.value = "0"
+                            }
+                        }
+
+                        delta
+                    }),
+            textStyle = TextStyle(
+                color = Color.Gray,
+                fontSize = 70.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            ),
             onValueChange = {
                 hour.value = it
             },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .width(100.dp)
-                .background(MaterialTheme.colors.onPrimary),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            maxLines = 1,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color.Gray,
+                unfocusedBorderColor = MaterialTheme.colors.background
+            ),
+            singleLine = true,
         )
         Text(text = " hour ", Modifier.align(Alignment.CenterHorizontally), fontSize = 10.sp)
     }
@@ -276,6 +377,7 @@ fun startProgress(
     pmin: Float,
     smin: Float,
     btn: MutableState<String>,
+//    dpm: DevicePolicyManager,
 ) {
     if (count.value > 0) {
 
@@ -286,6 +388,15 @@ fun startProgress(
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
         )
+
+//        val adminName = context.componentName
+//        dpm.setLockTaskPackages(adminName, arrayOf("com.phoenix.samai."))
+//
+//        dpm.setLockTaskFeatures(
+//            (context as Activity).componentName,
+//            DevicePolicyManager.LOCK_TASK_FEATURE_NONE
+//        )
+//        (context as Activity).startLockTask()
         mWakeLock.acquire()
         pProgress.value = 100f
         sProgress.value = 100f
@@ -308,7 +419,8 @@ fun startProgress(
                     count,
                     pmin,
                     smin,
-                    btn
+                    btn,
+//                    dpm
                 )
             }.start()
         }.start()
@@ -320,6 +432,7 @@ fun startProgress(
          * Enable touch input
          * */
         (context as Activity).window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        (context as Activity).stopLockTask()
     }
 }
 
