@@ -12,3 +12,4 @@ object Destinations {
     const val PARAM_ID_KEY = "paramId"
 
 }
+

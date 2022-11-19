@@ -88,8 +88,8 @@ fun timeScreen(context: Context) {
 
 
         val hour = remember { mutableStateOf("0") }
-        val pMin = remember { mutableStateOf("0") }
-        val sMin = remember { mutableStateOf("0") }
+        val pMin = remember { mutableStateOf("45") }
+        val sMin = remember { mutableStateOf("15") }
         val pProgress = remember { mutableStateOf(100f) }
         val pTimer = remember { mutableStateOf("0:0:0") }
         val sProgress = remember { mutableStateOf(100f) }
@@ -153,7 +153,7 @@ fun timeScreen(context: Context) {
             BackHandler(enabled = false){ }
         }else{
             BackHandler(enabled = true){
-                Toast.makeText(context, "focus on work no going back", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Screenshot is not allowed !", Toast.LENGTH_SHORT).show()
             }
         }
 

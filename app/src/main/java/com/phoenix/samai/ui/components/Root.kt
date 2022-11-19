@@ -26,10 +26,11 @@ import com.phoenix.samai.ui.screen.home.HomeScreen
 import com.phoenix.samai.ui.screen.setting.SettingsScreen
 import com.phoenix.samai.ui.screen.timer.TimerScreen
 import com.phoenix.samai.ui.theme.SamaiTheme
+import com.phoenix.samai.ui.theme.isSystemInDarkThemeCustom
 
 @Composable
 fun RootView(content: @Composable () -> Unit){
-    SamaiTheme(darkTheme = false) {
+    SamaiTheme(darkTheme = isSystemInDarkThemeCustom()) {
         val systemUiController = rememberSystemUiController()
         val darkIcons = MaterialTheme.colors.isLight
         SideEffect { systemUiController.setSystemBarsColor(Color.Transparent, darkIcons) }

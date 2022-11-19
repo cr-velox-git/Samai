@@ -357,6 +357,9 @@ fun createAlarm(
 
     // we call broadcast using pendingIntent
     val requestCode = 991
+    intent.putExtra("TITLE", "alarm")
+    intent.putExtra("DES", "name")
+    intent.putExtra("NOTIFICATION_ID",  AlarmManager.INTERVAL_DAY)
     val pendingIntent =
         PendingIntent.getBroadcast(context, requestCode, intent, FLAG_MUTABLE)
 

@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import com.phoenix.samai.R
 import com.phoenix.samai.data.viewmodels.AlarmViewModel
@@ -51,7 +52,7 @@ fun AlarmScreen(navController: NavController) {
 //            Progress(modifier = Modifier.padding(16.dp).fillMaxWidth(),50f)
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Destinations.CREATE_ALARM_ROUTE)
+                    navController.navigate(Destinations.CREATE_ALARM_ROUTE, )
                 },
                 shape = CircleShape,
                 modifier = Modifier

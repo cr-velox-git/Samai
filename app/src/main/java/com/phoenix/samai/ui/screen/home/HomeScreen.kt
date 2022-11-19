@@ -81,11 +81,12 @@ fun HomeScreen(
                 }
             }
         },
-//    modifier = Modifier.background(MaterialTheme.colors.secondary)
+//
         ) {
         NavHost(
             navController = navController,
-            startDestination = Destinations.CLOCK_ROUTE
+            startDestination = Destinations.CLOCK_ROUTE,
+            modifier = Modifier.padding(it)
         ) {
             composable(Destinations.CLOCK_ROUTE) {
                 ClockScreen(parentNavController)

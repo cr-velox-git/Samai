@@ -1,5 +1,8 @@
+@file:Suppress("OPT_IN_IS_NOT_ENABLED")
+
 package com.phoenix.samai.ui.screen.splash
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -27,7 +30,7 @@ import com.phoenix.samai.ui.components.RootView
 import com.phoenix.samai.utils.RootUtils
 import java.util.*
 
-@OptIn(ExperimentalMotionApi::class)
+@SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -52,15 +55,24 @@ class SplashScreenActivity : ComponentActivity() {
                             if (progress.value >= 1f) {
                                 cancel()
                                 if (RootUtils.isDeviceRooted) {
-                                    Toast.makeText(this@SplashScreenActivity, "Device is rooted", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        this@SplashScreenActivity,
+                                        "Device is rooted",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
-                                    Toast.makeText(this@SplashScreenActivity, "Device is not rooted", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        this@SplashScreenActivity,
+                                        "Device is not rooted",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                     callIntent()
                                 }
                             }
                         }
 
                         override fun onFinish() {
+
                         }
                     }
                     if (!clockTicking.value) {
@@ -72,7 +84,7 @@ class SplashScreenActivity : ComponentActivity() {
 
 
                     Spacer(modifier = Modifier.weight(1f))
-                    Row() {
+                    Row{
                         Spacer(modifier = Modifier.weight(1f))
                         SplashScreen(progress = progress)
                         Spacer(modifier = Modifier.weight(1f))
@@ -122,7 +134,6 @@ fun SplashScreen(progress: MutableState<Float>) {
                 MaterialTheme.colors.primary
             )
         )
-
         val white = Brush.linearGradient(
             listOf(
                 MaterialTheme.colors.background,
@@ -131,7 +142,6 @@ fun SplashScreen(progress: MutableState<Float>) {
 //                Color.Green
             )
         )
-
         Box(
             Modifier
                 .width(dpSize)
@@ -144,8 +154,6 @@ fun SplashScreen(progress: MutableState<Float>) {
                     .height(dpSize)
             ) {
                 val width = size.width
-                val height = size.height
-
                 drawArc(
                     topLeft = Offset(0f, 0f),
                     brush = red,
@@ -168,8 +176,6 @@ fun SplashScreen(progress: MutableState<Float>) {
                     .height(dpSize)
             ) {
                 val width = size.width
-                val height = size.height
-
                 drawArc(
                     topLeft = Offset(20f, 20f),
                     brush = white,
@@ -193,7 +199,6 @@ fun SplashScreen(progress: MutableState<Float>) {
                     .height(dpSize)
             ) {
                 val width = size.width
-                val height = size.height
 
                 drawArc(
                     topLeft = Offset(50f, 50f),
@@ -217,7 +222,6 @@ fun SplashScreen(progress: MutableState<Float>) {
                     .height(dpSize)
             ) {
                 val width = size.width
-                val height = size.height
 
                 drawArc(
                     topLeft = Offset(0f, 0f),
@@ -242,7 +246,6 @@ fun SplashScreen(progress: MutableState<Float>) {
                     .height(dpSize)
             ) {
                 val width = size.width
-                val height = size.height
 
                 drawArc(
                     topLeft = Offset(120f, 120f),
@@ -265,7 +268,6 @@ fun SplashScreen(progress: MutableState<Float>) {
                     .height(dpSize)
             ) {
                 val width = size.width
-                val height = size.height
 
                 drawArc(
                     topLeft = Offset(140f, 140f),
@@ -289,7 +291,6 @@ fun SplashScreen(progress: MutableState<Float>) {
                     .height(dpSize)
             ) {
                 val width = size.width
-                val height = size.height
 
                 drawArc(
                     topLeft = Offset(170f, 170f),

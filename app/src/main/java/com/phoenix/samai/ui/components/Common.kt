@@ -121,6 +121,12 @@ fun Progress(modifier: Modifier, pProgress: Float, sProgress: Float) {
                 MaterialTheme.colors.primary
             )
         )
+        val brush3 = Brush.linearGradient(
+            listOf(
+                MaterialTheme.colors.background,
+                MaterialTheme.colors.background
+            )
+        )
         Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
             val width = size.width
             val height = size.height
@@ -144,7 +150,7 @@ fun Progress(modifier: Modifier, pProgress: Float, sProgress: Float) {
             )
             drawArc(
                 topLeft = Offset(0f + thickness / 2, 0f + thickness / 2),
-                brush = Brush.linearGradient(listOf(Color.White, Color.White)),
+                brush = brush3,
                 useCenter = true,
                 size = Size(width - thickness, width - thickness),
                 startAngle = 0f,
